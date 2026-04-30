@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌿🧭 RU Navigating the Accounting Safari?</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+    <style>
+        /* CSS: Dramatic Safari Theme with Photo Background */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a331a;
+            background-image: 
+                linear-gradient(rgba(15, 35, 15, 0.75), rgba(15, 35, 15, 0.85)),
+                url('https://images.unsplash.com/photo-1534067783941-51c9c23ecefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #2c3e50;
+        }
+        #app-container {
+            background-color: #f1ebd9;
+            width: 100%;
+            max-width: 400px;
+            height: 650px;
+            border-radius: 12px;
+            border: 6px solid #582f0e;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .screen {
+            padding: 30px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; 
+            height: 100%;
+            text-align: center;
+            box-sizing: border-box;
+            overflow-y: auto; 
+        }
+        .screen::-webkit-scrollbar { display: none; }
+        .screen { -ms-overflow-style: none; scrollbar-width: none; }
+        .active { display: flex; }
+        h1, h2, h3, h4 { 
+            color: #cc0033; /* Rutgers Scarlet */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            margin-top: 0;
+        }
+        h1 { font-size: 24px; font-weight: 800; }
+        p { line-height: 1.5; }
+        
+        /* Input & Controls */
+        .controls-box {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px dashed #7f4f24;
+            margin-bottom: 15px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        input[type="number"] {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #7f4f24;
+            font-size: 16px;
+            font-weight: bold;
+            width: 60px;
+            text-align: center;
+        }
+        
+        /* Custom File Input Styling */
+        input[type="file"] {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            box-sizing: border-box;
+            background: #e9edc9;
+            border: 2px dashed #118ab2;
+            border-radius: 8px;
+            font-family: inherit;
+            cursor: pointer;
+            color: #073b4c;
+        }
+
+        /* Guide and Speech Bubble Container */
+        #guide-section {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            width: 100%;
+            margin-top: auto;
+            margin-bottom: 10px;
+        }
+        
+        #guide-character {
+            width: 80px;
+            height: auto;
+            margin-right: 15px;
+            object-fit: contain;
+        }
+        
+        #speech-bubble {
+            flex: 1;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            position: relative;
+            border: 2px solid #582f0e;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+        /* Bubble Pointer */
+        #speech-bubble::after {
+            content: '';
+            position: absolute;
+            left: -12px;
+            top: 20px;
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-right: 12px solid #582f0e;
+        }
+        #feedback-text {
+            font-size: 14px;
+            margin: 0;
+        }
+
+        /* Wooden Button Styles (Scarlet/Black theme) */
+        button {
+            background-color: #333; /* Dark/Black base */
+            color: white;
+            border: 2px solid #cc0033; /* Scarlet border */
+            padding: 15px 20px;
+            margin: 8px 0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+        button:hover:not(:disabled) { 
+            background-color: #cc0033; /* Scarlet on hover */
+            transform: translateY(-2px);
+        }
+        button:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        button:disabled { cursor: not-allowed; opacity: 0.9; }
+        
+        .answer-btn { background-color: #e9edc9; color: #2c3e50; border: 2px solid #7f4f24; }
+        .answer-btn:hover:not(:disabled) { background-color: #ccd5ae; }
+        
+        /* Progress Bar */
+        #progress-container {
+            width: 100%;
+            background-color: #d4a373;
+            border-radius: 10px;
+            height: 12px;
+            border: 2px solid #7f4f24;
+            margin-bottom: 20px;
+        }
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #cc0033; /* Progress is Scarlet */
+            border-radius: 8px;
+            transition: width 0.3s ease;
+        }
+        
+        /* Safari Grid */
+        .habitat-section {
+            width: 100%;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.4);
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #d4a373;
+            box-sizing: border-box;
+        }
+        .habitat-section h4 { margin-bottom: 10px; color: #582f0e;}
+        .zoo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 100%;
+        }
+        .animal-slot {
+            font-size: 35px;
+            background: #e9edc9;
+            border-radius: 12px;
+            padding: 10px;
+            border: 2px dashed #7f4f24;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #reward-emoji { font-size: 90px; margin: 20px 0; animation: pulse 1s infinite; }
+        #loading-status { font-weight: bold; color: #118ab2; min-height: 20px; margin-bottom: 10px; }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    
+    <div id="home-screen" class="screen active" style="justify-content: center;">
+        <h1>🌿🧭 RU Navigating the Accounting Safari?</h1>
+        <p>Choose your accounting trail to rescue animals for your expedition sanctuary!</p>
+        
+        <div class="controls-box">
+            <label for="target-input"><strong>Target Rescues to Win:</strong></label>
+            <input type="number" id="target-input" value="5" min="1" max="50">
+        </div>
+
+        <button onclick="startQuiz('easy')">Easy Trail (Basics)</button>
+        <button onclick="startQuiz('medium')">Medium River (Statements)</button>
+        <button onclick="startQuiz('hard')">Hard Jungle (Advanced)</button>
+        
+        <button onclick="showScreen('upload-screen')" style="background-color: #cc0033; margin-top: 15px;">⛺ Custom Expedition (Upload PDF)</button>
+        <button onclick="showScreen('zoo-screen')">View Sanctuary</button>
+    </div>
+
+    <div id="upload-screen" class="screen">
+        <h2>⛺ The Research Tent</h2>
+        <p>Upload a PDF of your study notes. We will read the file and generate fill-in-the-blank questions!</p>
+        
+        <input type="file" id="pdf-upload" accept="application/pdf" />
+        <div id="loading-status"></div>
+
+        <button onclick="generateAndStartCustom()" style="background-color: #118ab2;" id="generate-btn">Generate Safari</button>
+        <button onclick="showScreen('home-screen')">Back to Camp</button>
+    </div>
+
+    <div id="quiz-screen" class="screen">
+        <h3 id="question-text" style="color: #31572c; margin-bottom: 20px;">Question goes here</h3>
+        
+        <div id="answers-container" style="width: 100%;"></div>
+        
+        <div id="guide-section">
+            <img id="guide-character" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0OCIgZmlsbD0iI2YxZWJkOSIgc3Ryb2tlPSIjNTgyZjBlIiBzdHJva2Utd2lkdGg9IjIiLz48ZyBpZD0iaGF0IiBmaWxsPSIjZDlhMzczIiBzdHJva2U9IiM3ZjRmMjQiIHN0cm9rZS13aWR0aD0iMSI+PHBhdGggZD0iTTUwLDE1QzMwLDE1LDIwLDMwLDIwLDQ1QzIwLDYwLDE1LDY1LDUwLDY1Qzg1LDY1LDgwLDYwLDgwLDQ1QzgwLDMwLDcwLDE1LDUwLDE1WiIvPjxwYXRoIGQ9Ik0xNSw2NUMxNSw2NSw4LDcwLDUwLDcwQzkyLDcwLDg1LDY1LDg1LDY1IiBmaWxsPSJub25lIiBzdHJva2Utd2lkdGg9IjIiLz48L2c+PGcgaWQ9ImZhY2UiPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDgiIHI9IjE4IiBmaWxsPSIjZmZjZGM5Ii8+PGNpcmNsZSBjeD0iNDMiIGN5PSI0NCIgcj0iMi41IiBmaWxsPSIjMzMzIi8+PGNpcmNsZSBjeD0iNTciIGN5PSI0NCIgcj0iMi41IiBmaWxsPSIjMzMzIi8+PHBhdGggZD0iTTQyLDU0QzQyLDU0LDQ1LDU4LDUwLDU4QzU1LDU4LDU4LDU0LDU4LDU0IiBmaWxsPSJub25lIiBzdHJva2U9IiNDQzAwMzMiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9nPjxnIGlkPSJ1bmlmb3JtIiBmaWxsPSIjZDlhMzczIiBzdHJva2U9IiM3ZjRmMjQiIHN0cm9rZS13aWR0aD0iMSI+PHBhdGggZD0iTTUwLDY2TDMwLDc1TDM1LDk1SDY1TDcwLDc1WiIvPjxwYXRoIGQ9Ik01MCw2Nkw0MCw3MEw0NSw4NUw1MCw4MEw1NSw4NUw2MCw3MFoiIGZpbGw9IiNDQzAwMzMiLz48L2c+PC9zdmc+" alt="Cartoon Safari Guide" />
+            
+            <div id="speech-bubble">
+                <p id="feedback-text"></p>
+            </div>
+        </div>
+
+        <button id="next-btn" onclick="handleNext()" style="display: none; background-color: #118ab2; border-color: #073b4c; margin-bottom: 15px;">Next ➡️</button>
+
+        <p style="width: 100%; margin: 0 0 10px 0;"><strong>Rescues:</strong> <span id="score-text">0</span> / <span id="target-score-display">5</span></p>
+        <div id="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        
+        <button onclick="showScreen('home-screen')" style="background-color: #333; color: white; border-color: #cc0033; margin-top: auto;">Return to Camp</button>
+    </div>
+
+    <div id="reward-screen" class="screen" style="justify-content: center;">
+        <h2>🎉 Safari Success! 🎉</h2>
+        <p>You met your rescue target on the safari!</p>
+        <div id="reward-emoji">🦁</div>
+        <p>You rescued a new animal!</p>
+        <button onclick="showScreen('zoo-screen')" style="background-color: #cc0033;">Go to Sanctuary</button>
+        <button onclick="showScreen('home-screen')">Back to Camp</button>
+    </div>
+
+    <div id="zoo-screen" class="screen">
+        <h2>My Sanctuary 🐾</h2>
+        
+        <div class="habitat-section">
+            <h4>🌿 Grasslands (Easy)</h4>
+            <div id="easy-grid" class="zoo-grid"></div>
+        </div>
+
+        <div class="habitat-section">
+            <h4>🌊 Watering Hole (Medium)</h4>
+            <div id="medium-grid" class="zoo-grid"></div>
+        </div>
+
+        <div class="habitat-section">
+            <h4>🌳 Deep Jungle (Hard)</h4>
+            <div id="hard-grid" class="zoo-grid"></div>
+        </div>
+
+        <div class="habitat-section" style="background: rgba(17, 138, 178, 0.2); border-color: #118ab2;">
+            <h4 style="color: #073b4c;">⛺ Research Tent (Custom)</h4>
+            <div id="custom-grid" class="zoo-grid"></div>
+        </div>
+
+        <button onclick="showScreen('home-screen')" style="margin-top: 20px;">Back to Camp</button>
+    </div>
+
+</div>
+
+<script>
+    // Initialize PDF.js worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    const animals = {
+        easy: ['🐒', '🐍', '🦜'],       
+        medium: ['🦓', '🦒', '🦛'],      
+        hard: ['🦁', '🦏', '🐆'],
+        custom: ['🦄', '🦕', '🦖', '🐉', '🦤'] 
+    };
+
+    const questions = {
+        easy: [
+            { q: "The Accounting Equation is Assets = Liabilities + ?", options: ["Revenue", "Equity", "Expenses", "Cash"], correct: 1, explanation: "Assets always equal Liabilities plus Equity." },
+            { q: "Money owed to a company by its customers is:", options: ["Accounts Payable", "Inventory", "Accounts Receivable", "Equity"], correct: 2, explanation: "Accounts Receivable is money customers owe you." },
+            { q: "Which normally has a Debit balance?", options: ["Revenue", "Accounts Payable", "Expenses", "Retained Earnings"], correct: 2, explanation: "Expenses and Assets naturally have debit balances." },
+            { q: "A company's debts are known as its:", options: ["Assets", "Equities", "Liabilities", "Revenues"], correct: 2, explanation: "Liabilities represent what a company owes." }
+        ],
+        medium: [
+            { q: "Allocating the cost of a tangible asset over its useful life is:", options: ["Amortization", "Depreciation", "Valuation", "Accrual"], correct: 1, explanation: "Depreciation applies to tangible physical assets." },
+            { q: "Which statement shows profitability over a period of time?", options: ["Balance Sheet", "Income Statement", "Cash Flows", "Bank Statement"], correct: 1, explanation: "The Income Statement details revenues and expenses." },
+            { q: "Cost of Goods Sold (COGS) is classified as:", options: ["An Asset", "A Liability", "An Expense", "Revenue"], correct: 2, explanation: "COGS is an expense tied directly to producing goods." }
+        ],
+        hard: [
+            { q: "During inflation, which inventory method yields the lowest net income?", options: ["FIFO", "LIFO", "Weighted Average", "Specific Identification"], correct: 1, explanation: "LIFO matches the most recent, higher costs against revenue." },
+            { q: "Which ratio measures a company's ability to pay short-term obligations?", options: ["Debt-to-Equity", "Return on Assets", "Current Ratio", "Gross Margin"], correct: 2, explanation: "Current Ratio = Current Assets / Current Liabilities." },
+            { q: "Treasury stock is a contra-equity account that normally has a:", options: ["Debit balance", "Credit balance", "Zero balance", "Variable balance"], correct: 0, explanation: "It reduces equity, so it carries a debit balance." }
+        ],
+        custom: [] 
+    };
+
+    let currentDifficulty = 'easy';
+    let currentScore = 0;
+    let targetScore = 5;
+    let currentQuestionIndex = 0;
+    
+    let unlockedZoo = { easy: [], medium: [], hard: [], custom: [] };
+
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(screen => {
+            screen.classList.remove('active');
+        });
+        document.getElementById(screenId).classList.add('active');
+        if(screenId === 'zoo-screen') updateZooDisplay();
+    }
+
+    async function generateAndStartCustom() {
+        const fileInput = document.getElementById('pdf-upload');
+        const statusEl = document.getElementById('loading-status');
+        const btn = document.getElementById('generate-btn');
+        const file = fileInput.files[0];
+
+        if (!file) { alert("Please upload a PDF file first!"); return; }
+        if (file.type !== "application/pdf") { alert("Please make sure you are uploading a valid PDF document."); return; }
+
+        btn.disabled = true;
+        statusEl.innerText = "⏳ Reading your PDF... Please wait.";
+
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            
+            let fullText = "";
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const textContent = await page.getTextContent();
+                const pageText = textContent.items.map(item => item.str).join(" ");
+                fullText += pageText + " ";
+            }
+            fullText = fullText.replace(/\s+/g, ' ').trim();
+
+            if (fullText.length < 50) {
+                statusEl.innerText = "❌ Could not find enough text in this PDF (It might be an image/scan).";
+                btn.disabled = false; return;
+            }
+
+            questions.custom = []; 
+            const sentences = fullText.match(/[^.?!]+[.?!]+/g) || [];
+            const allWords = fullText.match(/\b[a-zA-Z]{5,}\b/g) || ['study', 'learn', 'notes', 'concept']; 
+
+            sentences.forEach(sentence => {
+                const words = sentence.match(/\b[a-zA-Z]{5,}\b/g);
+                if (words && words.length > 0) {
+                    const targetWord = words[Math.floor(Math.random() * words.length)];
+                    const qText = sentence.replace(new RegExp(`\\b${targetWord}\\b`, 'i'), "________");
+                    
+                    let options = [targetWord];
+                    while (options.length < 4) {
+                        let randomWord = allWords[Math.floor(Math.random() * allWords.length)];
+                        if (!options.includes(randomWord)) options.push(randomWord);
+                    }
+                    
+                    options.sort(() => Math.random() - 0.5);
+                    const correctIdx = options.indexOf(targetWord);
+
+                    questions.custom.push({
+                        q: qText.trim(),
+                        options: options,
+                        correct: correctIdx,
+                        explanation: `The missing word was "${targetWord}".`
+                    });
+                }
+            });
+
+            if (questions.custom.length === 0) {
+                statusEl.innerText = "❌ Could not parse sentences from this PDF.";
+                btn.disabled = false; return;
+            }
+
+            statusEl.innerText = "";
+            btn.disabled = false;
+            startQuiz('custom');
+
+        } catch (error) {
+            statusEl.innerText = "❌ Error reading PDF file.";
+            btn.disabled = false;
+        }
+    }
+
+    function startQuiz(difficulty) {
+        let inputVal = document.getElementById('target-input').value;
+        targetScore = parseInt(inputVal) || 5;
+        document.getElementById('target-score-display').innerText = targetScore;
+
+        currentDifficulty = difficulty;
+        currentScore = 0;
+        updateProgress();
+        loadQuestion();
+        showScreen('quiz-screen');
+    }
+
+    function loadQuestion() {
+        // Hide guide and next button when loading a new question
+        document.getElementById('guide-section').style.display = 'none'; 
+        document.getElementById('next-btn').style.display = 'none'; 
+        
+        const pool = questions[currentDifficulty];
+        currentQuestionIndex = Math.floor(Math.random() * pool.length);
+        const questionData = pool[currentQuestionIndex];
+        
+        document.getElementById('question-text').innerText = questionData.q;
+        
+        const answersContainer = document.getElementById('answers-container');
+        answersContainer.innerHTML = ''; 
+
+        questionData.options.forEach((option, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'answer-btn';
+            btn.innerText = option;
+            btn.onclick = () => checkAnswer(index);
+            answersContainer.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selectedIndex) {
+        const pool = questions[currentDifficulty];
+        const questionData = pool[currentQuestionIndex];
+        const feedbackEl = document.getElementById('feedback-text');
+        const buttons = document.querySelectorAll('.answer-btn');
+
+        // Disable buttons so they can't be clicked twice
+        buttons.forEach(btn => btn.disabled = true);
+        
+        // Show the guide character and speech bubble
+        document.getElementById('guide-section').style.display = 'flex';
+
+        if (selectedIndex === questionData.correct) {
+            buttons[selectedIndex].style.backgroundColor = "#4f772d"; 
+            buttons[selectedIndex].style.color = "white";
+            buttons[selectedIndex].style.borderColor = "#31572c";
+            
+            feedbackEl.innerHTML = `<strong style="color: #4f772d">✅ Correct!</strong><br>${questionData.explanation}`;
+            
+            currentScore++;
+            updateProgress();
+        } else {
+            buttons[selectedIndex].style.backgroundColor = "#d62828"; 
+            buttons[selectedIndex].style.color = "white";
+            buttons[selectedIndex].style.borderColor = "#9b2226";
+            
+            // Highlight the correct answer in green
+            buttons[questionData.correct].style.backgroundColor = "#4f772d"; 
+            buttons[questionData.correct].style.color = "white";
+
+            const correctAnswerText = questionData.options[questionData.correct];
+            
+            feedbackEl.innerHTML = `<strong style="color: #d62828">❌ Incorrect.</strong><br>The answer is "${correctAnswerText}".<br><span style="font-size: 13px; font-weight: normal;">${questionData.explanation}</span>`;
+        }
+        
+        // Show the Next button
+        const nextBtn = document.getElementById('next-btn');
+        if (currentScore >= targetScore) {
+            nextBtn.innerText = "Claim Reward! 🏆";
+        } else {
+            nextBtn.innerText = "Next ➡️";
+        }
+        nextBtn.style.display = 'block';
+    }
+
+    function handleNext() {
+        if (currentScore >= targetScore) {
+            triggerReward();
+        } else {
+            loadQuestion();
+        }
+    }
+
+    function updateProgress() {
+        document.getElementById('score-text').innerText = currentScore;
+        const percent = (currentScore / targetScore) * 100;
+        document.getElementById('progress-bar').style.width = percent + '%';
+    }
+
+    function triggerReward() {
+        const pool = animals[currentDifficulty];
+        const unlockedList = unlockedZoo[currentDifficulty];
+        
+        const availableAnimals = pool.filter(a => !unlockedList.includes(a));
+        let newAnimal = '🏆'; 
+
+        if (availableAnimals.length > 0) {
+            newAnimal = availableAnimals[Math.floor(Math.random() * availableAnimals.length)];
+            unlockedList.push(newAnimal);
+        }
+
+        document.getElementById('reward-emoji').innerText = newAnimal;
+        showScreen('reward-screen');
+    }
+
+    function updateZooDisplay() {
+        const buildGrid = (gridId, difficultyTier, slotCount) => {
+            const grid = document.getElementById(gridId);
+            grid.innerHTML = ''; 
+            const unlockedList = unlockedZoo[difficultyTier];
+            
+            for (let i = 0; i < slotCount; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'animal-slot';
+                slot.innerText = unlockedList[i] ? unlockedList[i] : '🌿'; 
+                grid.appendChild(slot);
+            }
+        };
+
+        buildGrid('easy-grid', 'easy', 3);
+        buildGrid('medium-grid', 'medium', 3);
+        buildGrid('hard-grid', 'hard', 3);
+        buildGrid('custom-grid', 'custom', 5);
+    }
+</script>
+
+</body>
+</html>
